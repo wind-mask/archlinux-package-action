@@ -36,6 +36,7 @@ jobs:
           wget https://github.com/christian-heusel/aur/raw/f12a03c830a3d4a5c16de561bf411eec55d0798c/spotify/spotify.sh
           popd
       - name: Running test
+        id: run-action
         uses: ./
         with:
           pkgrel: 2
@@ -49,6 +50,13 @@ jobs:
           ls -la
           git diff
 
+
+      - name: Upload build artifacts
+        if: steps.run-action.outputs.artifacts-uploaded == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-packages
+          path: spotify/*.pkg.tar.*
   publish:
     name: Publish OCI image
     needs: pretest
@@ -126,6 +134,7 @@ jobs:
           cat action.yml
 
       - name: Running test
+        id: run-action
         uses: ./
         with:
           pkgver: '0.4.26'
@@ -137,6 +146,13 @@ jobs:
         run: |
           ls -la
           git diff
+
+      - name: Upload build artifacts
+        if: steps.run-action.outputs.artifacts-uploaded == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-packages
+          path: ${{ github.workspace }}/*.pkg.tar.*
 
   release:
     name: Release

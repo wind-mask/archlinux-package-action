@@ -99,3 +99,9 @@ if [[ -e .SRCINFO ]]; then
     sudo cp -fv .SRCINFO "$WORKPATH"/.SRCINFO
 fi
 echo "::endgroup::"
+# Copy built packages if upload-artifacts is enabled
+echo "::group::Copying built packages to $WORKPATH"
+find . -name "*.pkg.tar.*" -exec sudo cp -fv {} "$WORKPATH"/ \;
+echo "::endgroup::"
+# Set output for artifacts-uploaded
+echo "artifacts-uploaded=true" | sudo tee -a "$GITHUB_OUTPUT"
